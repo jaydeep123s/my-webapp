@@ -15,7 +15,13 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    if (fileExists('package.json')) {
+                        sh 'npm install'
+                    } else {
+                        error 'package.json not found!'
+                    }
+                }
             }
         }
         stage('Build') {
