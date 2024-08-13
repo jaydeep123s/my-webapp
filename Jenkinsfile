@@ -28,5 +28,18 @@ pipeline {
                 sh 'npm test'
             }
         }
-
-    }   
+        stage('Deploy') {
+            steps {
+                sh 'scp -i /path/to/your/private-key -r build/ user@your-server:/path/to/deploy'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
