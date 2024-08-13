@@ -3,29 +3,43 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                https://github.com/jaydeep123s/my-webapp.git
+                git branch: 'main', url: 'https://github.com/jaydeep123s/my-webapp.git', credentialsId: 'github-pat'
+            }
+        }
+        stage('Print Environment') {
+            steps {
+                sh 'echo $PATH'
+                sh 'which npm'
+                sh 'npm -v'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
         }
         stage('Build') {
             steps {
-                script {
-                    sh 'pip install -r requirements.txt'
-                }
+                sh 'npm run build'
             }
         }
         stage('Test') {
             steps {
-                script {
-                    sh 'pytest'
-                }
+                sh 'npm test'
             }
         }
         stage('Deploy') {
             steps {
-                script {
-                    sh 'scp -i /path/to/your/key.pem -r * ec2-user@<EC2_PUBLIC_IP>:/path/to/deployment/directory/'
-                    sh 'ssh -i /path/to/your/key.pem ec2-user@<EC2_PUBLIC_IP> "cd /path/to/deployment/directory/ && ./deploy.sh"'
-                }
+                sh 'scp -i /path/to/your/private-key -r build/ user@your-server:/path/to/deploy'
             }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
