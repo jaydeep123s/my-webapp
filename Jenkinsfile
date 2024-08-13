@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/jaydeep123s/my-webapp.git', credentialsId: 'github-pat'
+                git url: 'https://github.com/jaydeep123s/my-webapp.git', credentialsId: 'github-pat'
             }
         }
         stage('Print Environment') {
@@ -15,7 +15,13 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    if (fileExists('package.json')) {
+                        sh 'npm install'
+                    } else {
+                        error 'package.json not found!'
+                    }
+                }
             }
         }
         stage('Build') {
@@ -30,16 +36,9 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'scp -i /path/to/your/private-key -r build/ user@your-server:/path/to/deploy'
+                sh 'scp -i /path/to/your/key.pem -r * ec2-user@<EC2_PUBLIC_IP>:/path/to/deployment/directory/'
+                sh 'ssh -i /path/to/your/key.pem ec2-user@<EC2_PUBLIC_IP> "cd /path/to/deployment/directory/ && ./deploy.sh"'
             }
-        }
-    }
-    post {
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed.'
         }
     }
 }
