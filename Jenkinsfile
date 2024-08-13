@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/jaydeep123s/my-webapp.git', branch: 'main', credentialsId: 'github-pat'
+                git url: 'https://github.com/jaydeep123s/my-webapp.git'
             }
         }
         stage('Print Environment') {
@@ -15,23 +15,29 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                script {
-                    if (fileExists('package.json')) {
-                        sh 'npm install'
-                    } else {
-                        error 'package.json not found!'
+                dir('path/to/your/directory') { // Change this if package.json is in a subdirectory
+                    script {
+                        if (fileExists('package.json')) {
+                            sh 'npm install'
+                        } else {
+                            error 'package.json not found!'
+                        }
                     }
                 }
             }
         }
         stage('Build') {
             steps {
-                sh 'npm run build'
+                dir('path/to/your/directory') { // Change this if needed
+                    sh 'npm run build'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test'
+                dir('path/to/your/directory') { // Change this if needed
+                    sh 'npm test'
+                }
             }
         }
         stage('Deploy') {
