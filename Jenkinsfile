@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/jaydeep123s/my-webapp.git', credentialsId: 'github-pat'
+                git url: 'https://github.com/jaydeep123s/my-webapp.git', branch: 'main', credentialsId: 'github-pat'
             }
         }
         stage('Print Environment') {
